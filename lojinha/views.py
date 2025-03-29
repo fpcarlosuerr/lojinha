@@ -7,6 +7,10 @@ from .models import Venda, ItemVenda, Parcela, Produto
 from .forms import VendaForm, ItemVendaForm, ProdutoForm
 from django.contrib import messages
 
+
+def inicio(request):
+    return render(request, 'lojinha/home.html')
+
 def nova_venda(request):
     #ItemVendaFormSet = modelformset_factory(ItemVenda, form=ItemVendaForm, extra=3)
     ItemVendaFormSet = modelformset_factory(ItemVenda, form=ItemVendaForm, extra=1, can_delete=True)
@@ -67,36 +71,44 @@ def lista_produtos(request):
 # Cadastrar produto
 
 def cadastrar_produto(request):
+    produtos = Produto.objects.all()
     if request.method == 'POST':
         form = ProdutoForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Produto cadastrado com sucesso!')
-            return redirect('produto_form')
+            return redirect('cadastrar_produto')
     else:
         form = ProdutoForm()
-    return render(request, 'lojinha/produto_form.html', {'form': form, 'titulo': 'Cadastrar Produto'})
+    return render(request, 'lojinha/produto_form.html', 
+                  {
+                      'form': form, 
+                      'titulo': 'Cadastrar Produto', 
+                      'produtos': produtos
+                  })
 
 # Editar produto
 
 def editar_produto(request, pk):
+    produtos = Produto.objects.all()
     produto = get_object_or_404(Produto, pk=pk)
     if request.method == 'POST':
         form = ProdutoForm(request.POST, instance=produto)
         if form.is_valid():
             form.save()
             messages.success(request, 'Produto atualizado com sucesso!')
-            return redirect('produto_form')
+            return redirect('cadastrar_produto')
     else:
         form = ProdutoForm(instance=produto)
-    return render(request, 'lojinha/produto_form.html', {'form': form, 'titulo': 'Editar Produto'})
+    return render(request, 'lojinha/produto_form.html', {'form': form, 'titulo': 'Editar Produto','produtos': produtos})
 
 # Excluir produto
 
 def excluir_produto(request, pk):
+    produtos = Produto.objects.all()
     produto = get_object_or_404(Produto, pk=pk)
-    if request.method == 'DELETE':
+    if request.method == 'GET':
         produto.delete()
         messages.success(request, 'Produto excluído com sucesso!')
-        return redirect('produto_form')
-    return render(request, 'lojinha/produto_form.html', {'produto': produto})
+        return redirect('cadastrar_produto')
+    return render(request, 'lojinha/produto_form.html', {'produto': produto,'produtos': produtos})

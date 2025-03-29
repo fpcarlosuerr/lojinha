@@ -13,12 +13,46 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    {% comment %} <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">Lojinha Escoteira</a>
+            <a class="navbar-brand" href="{% url 'cadastrar_produto'%}">Produtos</a>
         </div>
-    </nav>
-
+    </nav> {% endcomment %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/">Lojinha Escoteira</a>
+      
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+      
+          <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav me-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  🛍 Produtos
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'nova_venda' %}">
+                  💸 Nova Venda
+                </a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                  📁 Cadastros
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{% url 'cadastrar_produto' %}">Cadastrar Produto</a></li>
+                  <li><a class="dropdown-item" href="{% url 'admin:index' %}">Acessar Admin</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      
     <div class="container">
         {% if messages %}
             {% for message in messages %}

@@ -7,4 +7,27 @@
   {{ form.as_p }}
   <button type="submit" class="btn btn-primary">Salvar</button>
 </form>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Preço</th>
+      <th>Estoque</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for produto in produtos %}
+    <tr>
+      <td>{{ produto.nome }}</td>
+      <td>R$ {{ produto.preco }}</td>
+      <td>{{ produto.estoque }}</td>
+      <td>
+        <a href="{% url 'editar_produto' produto.pk %}" class="btn btn-sm btn-warning">Editar</a>
+        <a href="{% url 'excluir_produto' produto.pk %}" class="btn btn-sm btn-danger">Excluir</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 {% endblock %}
