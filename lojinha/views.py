@@ -1,10 +1,10 @@
 # views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import modelformset_factory
 from django.utils.timezone import now
 from datetime import timedelta
-from .models import Venda, ItemVenda, Parcela
-from .forms import VendaForm, ItemVendaForm
+from .models import Venda, ItemVenda, Parcela, Produto
+from .forms import VendaForm, ItemVendaForm, ProdutoForm
 from django.contrib import messages
 
 def nova_venda(request):
@@ -57,3 +57,46 @@ def nova_venda(request):
         'venda_form': venda_form,
         'formset': formset,
     })
+
+
+# Listar produtos
+def lista_produtos(request):
+    produtos = Produto.objects.all()
+    return render(request, 'lojinha/produto_form.html', {'produtos': produtos})
+
+# Cadastrar produto
+
+def cadastrar_produto(request):
+    if request.method == 'POST':
+        form = ProdutoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Produto cadastrado com sucesso!')
+            return redirect('produto_form')
+    else:
+        form = ProdutoForm()
+    return render(request, 'lojinha/produto_form.html', {'form': form, 'titulo': 'Cadastrar Produto'})
+
+# Editar produto
+
+def editar_produto(request, pk):
+    produto = get_object_or_404(Produto, pk=pk)
+    if request.method == 'POST':
+        form = ProdutoForm(request.POST, instance=produto)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Produto atualizado com sucesso!')
+            return redirect('produto_form')
+    else:
+        form = ProdutoForm(instance=produto)
+    return render(request, 'lojinha/produto_form.html', {'form': form, 'titulo': 'Editar Produto'})
+
+# Excluir produto
+
+def excluir_produto(request, pk):
+    produto = get_object_or_404(Produto, pk=pk)
+    if request.method == 'DELETE':
+        produto.delete()
+        messages.success(request, 'Produto excluído com sucesso!')
+        return redirect('produto_form')
+    return render(request, 'lojinha/produto_form.html', {'produto': produto})
