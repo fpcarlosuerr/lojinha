@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Relatório de Vendas{% endblock %}
+
+{% block content %}
+<h2>Relatório de Vendas</h2>
+
+<form method="get">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Gerar Relatório</button>
+</form>
+
+{% if vendas %}
+    <h3>Relatório de Vendas de {{ form.cleaned_data.data_inicio }} até {{ form.cleaned_data.data_fim }}</h3>
+    <table class="table" id="vendasTable">
+        <thead>
+            <tr>
+                <th>ID da Venda</th>
+                <th>Escoteiro</th>
+                <th>Data</th>
+                <th>Total</th>
+                <th>Valor Pago</th>
+                <th>Valor em Aberto</th>
+                <th>Status das Parcelas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venda in vendas %}
+            <tr>
+                <td>{{ venda.id }}</td>
+                <td>{{ venda.escoteiro.nome }}</td>
+                <td>{{ venda.data }}</td>
+                <td>R$ {{ venda.total }}</td>
+                <td>R$ {{ venda.total_pago }}</td>
+                <td>R$ {{ venda.total_em_aberto }}</td>
+                <td>
+                    {% for status in venda.parcelas_status %}
+                        <p>{{ status }}</p>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% elif form.is_valid %}
+    <p>Não há vendas para o período selecionado.</p>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    $(document).ready(function() {
+        // Inicializa o DataTable
+        $('#vendasTable').DataTable({
+            dom: 'Bfrtip',  // Define a área de controle da tabela
+            buttons: [
+                'copy', 'csv', 'excel', {
+                    extend: 'pdfHtml5',  // Adiciona a opção de exportar para PDF
+                    orientation: 'portrait',
+                    pageSize: 'A4',
+                    title: 'Relatório de Vendas',
+                    message: 'Gerado em {{ current_date }}'  // Personalizar o título no PDF
+                }
+            ],
+            "paging": true,   // Habilita a paginação
+            "searching": true, // Habilita a pesquisa
+            "ordering": true   // Habilita a ordenação das colunas
+        });
+    });
+</script>
+{% endblock %}

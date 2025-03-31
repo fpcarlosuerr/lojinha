@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Cadastrar/Editar Escoteiro{% endblock %}
+
+{% block content %}
+<h2>{% if form.instance.pk %}Editar{% else %}Cadastrar{% endif %} Escoteiro</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Salvar</button>
+</form>
+
+{% if form.instance.pk %}
+    <a href="{% url 'listar_escoteiros' %}" class="btn btn-secondary">Voltar</a>
+{% endif %}
+{% endblock %}

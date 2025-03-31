@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes da Venda{% endblock %}
+
+{% block content %}
+<h2>Detalhes da Venda #{{ venda.id }}</h2>
+
+<p><strong>Escoteiro:</strong> {{ venda.escoteiro.nome }}</p>
+<p><strong>Total:</strong> R${{ venda.total }}</p>
+
+<h4>Parcelas</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Parcelas</th>
+            <th>Valor</th>
+            <th>Data de Vencimento</th>
+            <th>Pago?</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for parcela in parcelas %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>R${{ parcela.valor }}</td>
+                <td>{{ parcela.data_vencimento }}</td>
+                <td>
+                    {% if parcela.pago %}
+                        Pago
+                    {% else %}
+                        <a href="{% url 'marcar_parcela_pago' parcela.id %}" class="btn btn-success">Marcar como Pago</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

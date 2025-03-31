@@ -1,8 +1,5 @@
 from django.db import models
 
-# Create your models here.
-from django.db import models
-
 class Escoteiro(models.Model):
     RAMOS = [
         ('lobinho', 'Lobinho'),
@@ -57,3 +54,31 @@ class Parcela(models.Model):
 
     def __str__(self):
         return f'Parcela de R${self.valor} - Vencimento: {self.data_vencimento}'
+
+
+class Compra(models.Model):
+    data = models.DateField(auto_now_add=True)
+    fornecedor = models.CharField(max_length=200)
+    total_gasto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def __str__(self):
+        return f'Compra #{self.id} - Fornecedor: {self.fornecedor} - Total: R${self.total_gasto}'
+
+    def calcular_total(self):
+        self.total_gasto = sum(item.subtotal() for item in self.itens.all())
+        self.save()
+
+class ItemCompra(models.Model):
+    compra = models.ForeignKey(Compra, related_name='itens', on_delete=models.CASCADE)
+    produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
+    quantidade = models.PositiveIntegerField(default=1)
+    preco_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def subtotal(self):
+        return self.quantidade * self.preco_unitario
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.produto.estoque += self.quantidade  # Atualiza o estoque
+        self.produto.save()
+        self.compra.calcular_total()  # Atualiza o total gasto na compra

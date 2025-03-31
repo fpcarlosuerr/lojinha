@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrar Venda{% endblock %}
+
+{% block content %}
+<h2>Registrar Venda</h2>
+
+{% if venda_form.errors %}
+  <div class="alert alert-danger">
+    <ul>
+      {% for field, errors in venda_form.errors.items %}
+        {% for error in errors %}
+          <li>{{ field }}: {{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+{% if formset.non_form_errors %}
+  <div class="alert alert-danger">
+    {{ formset.non_form_errors }}
+  </div>
+{% endif %}
+
+<form method="post" id="vendaForm">
+    {% csrf_token %}
+
+    <h3>Dados da Venda</h3>
+    <div class="mb-3">
+        {{ venda_form.as_p }}
+    </div>
+
+    <hr>
+    <h4>Itens da Venda</h4>
+    <div id="formset-itens">
+        {{ formset.management_form }}
+        {% for form in formset %}
+            <div class="item-form">
+                {{ form.as_p }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <button type="button" class="btn btn-outline-primary" id="add-item">Adicionar Item</button>
+    <hr>
+    <button type="submit" class="btn btn-success">Salvar Venda</button>
+</form>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const formsetContainer = document.getElementById('formset-itens');
+    const addBtn = document.getElementById('add-item');
+    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+
+    function atualizarPreco(selectElement) {
+        const produtoId = selectElement.value;
+        const itemForm = selectElement.closest('.item-form');
+        const precoInput = itemForm.querySelector("input[name$='preco_unitario']");
+
+        if (produtoId) {
+            fetch(`/get_preco_produto/${produtoId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    precoInput.value = data.preco;  // Atualiza o campo de preço
+                })
+                .catch(error => console.error('Erro ao buscar preço:', error));
+        }
+    }
+
+    // Aplica o evento de mudança nos selects existentes
+    document.querySelectorAll(".produto-selecionado").forEach(select => {
+        select.addEventListener("change", function () {
+            atualizarPreco(this);
+        });
+    });
+
+    addBtn.addEventListener('click', () => {
+        const currentFormCount = parseInt(totalForms.value);
+        const newFormHtml = formsetContainer.querySelector('.item-form').outerHTML.replaceAll(/form-(\d+)/g, `form-${currentFormCount}`);
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = newFormHtml;
+        const newForm = tempDiv.firstElementChild;
+
+        // Adiciona evento para atualizar o preço no novo item
+        newForm.querySelector(".produto-selecionado").addEventListener("change", function () {
+            atualizarPreco(this);
+        });
+
+        formsetContainer.appendChild(newForm);
+        totalForms.value = currentFormCount + 1;
+    });
+});
+</script>
+{% endblock %}

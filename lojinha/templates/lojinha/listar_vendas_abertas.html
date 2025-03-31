@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Vendas com Prestações em Aberto{% endblock %}
+
+{% block content %}
+<h2>Vendas com Prestações em Aberto</h2>
+
+{% if vendas %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID da Venda</th>
+                <th>Escoteiro</th>
+                <th>Total</th>
+                <th>Parcelas em Aberto</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venda in vendas %}
+                <tr>
+                    <td>{{ venda.id }}</td>
+                    <td>{{ venda.escoteiro.nome }}</td>
+                    <td>{{ venda.total }}</td>
+                    <td>
+                        {% for parcela in venda.parcelas.all %}
+                            {% if not parcela.pago %}
+                                <span>Parcela {{ forloop.counter }} - Vencimento: {{ parcela.data_vencimento }} - Valor: R${{ parcela.valor }} <br></span>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <a href="{% url 'detalhar_venda' venda.id %}" class="btn btn-info">Detalhar</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Não há vendas com parcelas em aberto.</p>
+{% endif %}
+{% endblock %}

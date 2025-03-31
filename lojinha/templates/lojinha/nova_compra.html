@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Nova Compra</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        {{ compra_form.as_p }}
+    </div>
+    
+    <h3>Itens da Compra</h3>
+    {{ item_formset.management_form }}
+    {% for form in item_formset %}
+        <div class="mb-3">
+            {{ form.as_p }}
+        </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-success">Salvar Compra</button>
+</form>
+{% endblock %}
