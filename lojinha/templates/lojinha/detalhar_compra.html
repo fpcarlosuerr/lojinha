@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes da Compra{% endblock %}
+
+{% block content %}
+<h2>Detalhes da Compra #{{ compra.id }}</h2>
+
+<p><strong>Data da Compra:</strong> {{ compra.data }}</p>
+<p><strong>Total:</strong> R${{ compra.total_gasto }}</p>
+
+<h4>Itens Comprados:</h4>
+<ul>
+    {% for item in compra.itens.all %}
+        <li>
+            Produto: {{ item.produto.nome }} <br>
+            Quantidade: {{ item.quantidade }} <br>
+            Preço: R${{ item.preco_unitario }}
+        </li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'listar_compras' %}" class="btn btn-secondary">Voltar para a Lista</a>
+
+{% endblock %}

@@ -1,21 +1,50 @@
 {% extends 'base.html' %}
+{% block title %}Nova Compra{% endblock %}
 
 {% block content %}
 <h2>Nova Compra</h2>
+
 <form method="post">
     {% csrf_token %}
-    <div class="mb-3">
-        {{ compra_form.as_p }}
-    </div>
-    
-    <h3>Itens da Compra</h3>
-    {{ item_formset.management_form }}
-    {% for form in item_formset %}
-        <div class="mb-3">
-            {{ form.as_p }}
-        </div>
-    {% endfor %}
+    {{ compra_form.as_p }}
 
+    <hr>
+    <h4>Itens da Compra</h4>
+    <div id="formset-itens">
+        {{ item_formset.management_form }}
+        {% for form in item_formset %}
+            <div class="item-form">
+                {{ form.as_p }}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <button type="button" class="btn btn-outline-primary" id="add-item">Adicionar Item</button>
+
+    <hr>
     <button type="submit" class="btn btn-success">Salvar Compra</button>
 </form>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const formsetContainer = document.getElementById('formset-itens');
+    const addBtn = document.getElementById('add-item');
+    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+
+    addBtn.addEventListener('click', () => {
+        const currentFormCount = parseInt(totalForms.value);
+        const newFormHtml = formsetContainer.querySelector('.item-form').outerHTML.replaceAll(/form-(\d+)/g, `form-${currentFormCount}`);
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = newFormHtml;
+        formsetContainer.appendChild(tempDiv.firstElementChild);
+        totalForms.value = currentFormCount + 1;
+    });
+});
+</script>
 {% endblock %}

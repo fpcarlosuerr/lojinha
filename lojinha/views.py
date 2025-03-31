@@ -10,8 +10,12 @@ from .forms import VendaForm, ItemVendaForm, ProdutoForm, CompraForm, ItemCompra
 from django.contrib import messages
 
 def listar_compras(request):
-    compras = Compra.objects.all()
+    compras = Compra.objects.all().prefetch_related('itens')  # Prefetch para otimizar a consulta
     return render(request, 'lojinha/listar_compras.html', {'compras': compras})
+
+def detalhar_compra(request, compra_id):
+    compra = get_object_or_404(Compra, id=compra_id)
+    return render(request, 'lojinha/detalhar_compra.html', {'compra': compra})
 
 def nova_compra(request):
     ItemCompraFormSet = modelformset_factory(ItemCompra, form=ItemCompraForm, extra=1, can_delete=True)
@@ -35,8 +39,10 @@ def nova_compra(request):
         compra_form = CompraForm()
         item_formset = ItemCompraFormSet(queryset=ItemCompra.objects.none())
 
-    return render(request, 'lojinha/nova_compra.html', {'compra_form': compra_form, 'item_formset': item_formset})
-
+    return render(request, 'lojinha/nova_compra.html', {
+        'compra_form': compra_form,
+        'item_formset': item_formset
+    })
 
 def inicio(request):
     return render(request, 'lojinha/home.html')
@@ -82,7 +88,7 @@ def nova_venda(request):
                     data_venc = now().date() + timedelta(days=30 * i)
                     Parcela.objects.create(venda=venda, valor=valor_parcela, data_vencimento=data_venc)
 
-            return redirect('ad min:index')  # ou alguma página de confirmação
+            return redirect('listar_vendas_abertas')  # ou alguma página de confirmação
 
     else:
         venda_form = VendaForm()

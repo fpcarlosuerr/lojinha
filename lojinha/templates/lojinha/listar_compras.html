@@ -6,20 +6,30 @@
 <table class="table">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Fornecedor</th>
+            <th>#</th>
             <th>Data</th>
-            <th>Total Gasto</th>
+            <th>Total</th>
+            <th>Itens</th>
+            <th>Ações</th>
         </tr>
     </thead>
     <tbody>
         {% for compra in compras %}
-        <tr>
-            <td>{{ compra.id }}</td>
-            <td>{{ compra.fornecedor }}</td>
-            <td>{{ compra.data }}</td>
-            <td>R$ {{ compra.total_gasto }}</td>
-        </tr>
+            <tr>
+                <td>{{ compra.id }}</td>
+                <td>{{ compra.data }}</td>
+                <td>R${{ compra.total_gasto }}</td>
+                <td>
+                    <ul>
+                        {% for item in compra.itens.all %}
+                            <li>{{ item.produto.nome }} {{ item.produto.idade_tamanho }} ({{ item.quantidade }} unidades) - R${{ item.preco_unitario }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>
+                    <a href="{% url 'detalhar_compra' compra.id %}" class="btn btn-info">Ver Detalhes</a>
+                </td>
+            </tr>
         {% endfor %}
     </tbody>
 </table>
