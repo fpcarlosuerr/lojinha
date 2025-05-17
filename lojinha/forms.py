@@ -75,12 +75,9 @@ class ItemCompraForm(forms.ModelForm):
 
 class FiltroVendasForm(forms.Form):
     data_inicio = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), label='Data Início')
-<<<<<<< HEAD
     data_fim = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), label='Data Fim')
 
 class PagamentoParcialForm(forms.Form):
     parcela_id = forms.IntegerField(widget=forms.HiddenInput())
     valor_pago = forms.DecimalField(max_digits=10, decimal_places=2, min_value=0.01)
-=======
-    data_fim = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), label='Data Fim')        
->>>>>>> 5e44138d0211cdccbf6f7bca9dcc9347531b4435
+    data_fim = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), label='Data Fim')

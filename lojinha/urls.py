@@ -21,9 +21,6 @@ urlpatterns = [
     path('escoteiro/editar/<int:pk>/', views.cadastrar_escoteiro, name='editar_escoteiro'),
     path('escoteiro/excluir/<int:pk>/', views.excluir_escoteiro, name='excluir_escoteiro'),
     path('relatorio_vendas/', views.relatorio_vendas, name='relatorio_vendas'),
-<<<<<<< HEAD
     path('parcelas/<int:parcela_id>/pagar/', views.pagar_parcela, name='pagar_parcela'),
-=======
->>>>>>> 5e44138d0211cdccbf6f7bca9dcc9347531b4435
 ]
 
