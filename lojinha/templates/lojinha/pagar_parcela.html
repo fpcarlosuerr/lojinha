@@ -1,0 +1,10 @@
+<h2>Pagamento da Parcela</h2>
+<p><strong>Valor da Parcela:</strong> R$ {{ parcela.valor }}</p>
+<p><strong>Valor já Pago:</strong> R$ {{ parcela.valor_pago_total }}</p>
+<p><strong>Restante:</strong> R$ {{ parcela.valor_restante }}</p>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Registrar Pagamento</button>
+</form>
