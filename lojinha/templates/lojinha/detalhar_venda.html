@@ -26,7 +26,7 @@
                 <td>{{ parcela.data_vencimento }}</td>
                 <td>
                     {% if parcela.pago %}
-                        Pago
+                        Pago em {{ parcela.data_baixa }}
                     {% else %}
                         <a href="{% url 'marcar_parcela_pago' parcela.id %}" class="btn btn-success">Marcar como Pago</a>
                         <a href="{% url 'pagar_parcela' parcela.id %}" class="btn btn-success">Pagar Parcela</a>
