@@ -6,7 +6,11 @@ from django.utils.dateparse import parse_date
 from django.http import JsonResponse
 from datetime import timedelta, date
 from .models import Venda, ItemVenda, Parcela, Produto, Compra, ItemCompra, Escoteiro
+<<<<<<< HEAD
+from .forms import VendaForm, ItemVendaForm, ProdutoForm, CompraForm, ItemCompraForm, EscoteiroForm, FiltroVendasForm, PagamentoParcialForm
+=======
 from .forms import VendaForm, ItemVendaForm, ProdutoForm, CompraForm, ItemCompraForm, EscoteiroForm, FiltroVendasForm
+>>>>>>> 5e44138d0211cdccbf6f7bca9dcc9347531b4435
 from django.contrib import messages
 
 def listar_compras(request):
@@ -179,6 +183,10 @@ def marcar_parcela_pago(request, parcela_id):
     parcela.save()
     return redirect('detalhar_venda', venda_id=parcela.venda.id)
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 5e44138d0211cdccbf6f7bca9dcc9347531b4435
 def cadastrar_escoteiro(request, pk=None):
     if pk:
         escoteiro = get_object_or_404(Escoteiro, pk=pk)
@@ -255,4 +263,29 @@ def relatorio_vendas(request):
         'form': form,
         'vendas': vendas,
         'current_date': current_date
+<<<<<<< HEAD
     })
+
+def pagar_parcela(request, parcela_id):
+    parcela = get_object_or_404(Parcela, id=parcela_id)
+
+    if request.method == 'POST':
+        form = PagamentoParcialForm(request.POST)
+        if form.is_valid():
+            valor_pago = form.cleaned_data['valor_pago']
+            try:
+                parcela.registrar_pagamento(valor_pago)
+                messages.success(request, 'Pagamento registrado com sucesso!')
+            except ValueError as e:
+                messages.error(request, str(e))
+            return redirect('listar_vendas_abertas')
+    else:
+        form = PagamentoParcialForm(initial={'parcela_id': parcela.id})
+
+    return render(request, 'lojinha/pagar_parcela.html', {
+        'parcela': parcela,
+        'form': form
+    })
+=======
+    })
+>>>>>>> 5e44138d0211cdccbf6f7bca9dcc9347531b4435
